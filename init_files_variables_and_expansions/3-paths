@@ -1,2 +1,2 @@
 #!/bin/bash
-echo "$PATH" | tr ':' '\n' | while read dir; do [ -z "$dir" ] && dir="." ; [ -d "$dir" ] && echo 1; done | wc -l
+echo $PATH | tr ':' '\n' | while read p; do [ -d "$p" ] && echo "$p"; done | wc -l
