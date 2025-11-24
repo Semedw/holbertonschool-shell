@@ -1,2 +1,2 @@
 #!/bin/bash
-echo $PATH | tr ':' '\n' | awk '{if(system("[ -d \"" $0 "\" ]") == 0) c++} END{print c}'
+echo "$PATH" | awk -F: '{print NF}'
