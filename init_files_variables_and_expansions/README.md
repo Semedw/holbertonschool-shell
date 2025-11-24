@@ -1,0 +1,1 @@
+salam necesiz 2
