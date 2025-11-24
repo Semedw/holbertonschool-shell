@@ -1,2 +1,2 @@
 #!/bin/bash
-echo $PATH | tr ':' '\n' | while read p; do [ -d "$p" ] && echo "$p"; done | wc -l
+echo $PATH | tr ':' '\n' | xargs -I {} sh -c 'if [ -d "{}" ]; then echo "{}"; fi' | wc -l
