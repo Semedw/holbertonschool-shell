@@ -1,2 +1,2 @@
 #!/bin/bash
-echo $PATH | tr ':' '\n' | awk '{ "test -d " $0 | getline res; if (res == "") c++ } END { print c }'
+echo $PATH | tr ':' '\n' | awk '{if(system("[ -d \"" $0 "\" ]") == 0) c++} END{print c}'
