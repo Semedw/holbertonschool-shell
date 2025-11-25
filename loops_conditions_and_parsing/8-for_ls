@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 #blablabla
 
-for file in *; do
-    if [ -f "$file" ]; then
-        # Remove everything up to the first dash
-        after_dash="${file#*-}"
 
-        # Only print when the dash exists and something follows it
-        if [ "$after_dash" != "$file" ]; then
-            echo "$after_dash"
-        fi
+for file in *; do
+    # Skip directories
+    if [ -f "$file" ]; then
+        # Extract text after first dash
+        after="${file#*-}"
+
+        # If no dash exists, after == file → print filename
+        # If dash exists, print only what's after the first dash
+        echo "$after"
     fi
 done
