@@ -5,7 +5,7 @@ i=1
 
 while [ "$i" -le 10 ]
 do
-	case "$variable" in
+	case "$i" in
 		4)
 			echo "$i"
 			echo "bad luck from China"
