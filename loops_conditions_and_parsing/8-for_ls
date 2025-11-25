@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#blablabla
+
+for file in *; do
+    if [ -f "$file" ]; then
+        # Remove everything up to the first dash
+        after_dash="${file#*-}"
+
+        # Only print when the dash exists and something follows it
+        if [ "$after_dash" != "$file" ]; then
+            echo "$after_dash"
+        fi
+    fi
+done
