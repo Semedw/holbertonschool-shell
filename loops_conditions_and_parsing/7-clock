@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#blablabla
+
+hour=0
+min=1
+
+while [ "$hour" -le 12 ]
+do 
+	echo "$hour"
+	hour=%((hour+1))
+done
+
+while [ "$min -le 59 ]
+do 
+	echo "$min"
+	min=$((min+1))
+done
