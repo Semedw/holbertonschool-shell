@@ -4,31 +4,25 @@ PID_FILE="/var/run/my_process.pid"
 PROCESS_SCRIPT="./manage_my_process"
 
 start() {
-    # Check if already running
     if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-        echo "manage_my_process is already running"
+        echo "Already running"
         return 1
     fi
 
-    # Check if executable exists
     if [ ! -x "$PROCESS_SCRIPT" ]; then
-        echo "Error: $PROCESS_SCRIPT not found or not executable"
+        echo "Error: $PROCESS_SCRIPT not executable"
         return 1
     fi
 
-    # Start the process
     $PROCESS_SCRIPT &
     PID=$!
-
-    # Give it a moment to start
     sleep 1
 
-    # Verify it is running
     if kill -0 "$PID" 2>/dev/null; then
-        echo "$PID" > "$PID_FILE"
-        echo "manage_my_process started"
+        echo "$PID" > "$PID_FILE" || { echo "Cannot write PID"; return 1; }
+        echo "Started $PID"
     else
-        echo "Failed to start manage_my_process"
+        echo "Failed to start"
         return 1
     fi
 }
