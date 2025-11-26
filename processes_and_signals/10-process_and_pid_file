@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #blablabla 
 
+chmod o+w /var/run
 PIDFILE="/var/run/myscript.pid"
 echo $$ > "$PIDFILE"
 
