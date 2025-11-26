@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
 #blablabla
 
-awk '{print $1, $9}' apache-access.log | \
-awk '{count[$1" "$2]++} END {for (key in count) print count[key], key}' | \
-sort -k1,1nr -k2,2 -k3,3
+awk '{ count[$1 OFS $9]++ } END { for (key in count) print count[key], key }' "$1" | sort -nr
