@@ -29,10 +29,10 @@ stop() {
     if kill -0 "$PID" 2>/dev/null; then
         kill "$PID"
         # Wait for process to actually stop
-        for i in {1..10}; do
-            kill -0 "$PID" 2>/dev/null || break
-            sleep 0.5
-        done
+        for _ in {1..10}; do
+    		kill -0 "$PID" 2>/dev/null || break
+    		sleep 0.5
+	done
         rm -f "$PID_FILE"
         echo "manage_my_process stopped"
     else
