@@ -1,29 +1,45 @@
 #!/usr/bin/env bash
-#salam
+
 PID_FILE="/var/run/my_process.pid"
 PROCESS_SCRIPT="./manage_my_process"
 
 start() {
+    # Check if already running
     if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
         echo "manage_my_process is already running"
         return 1
     fi
 
+    # Check if executable exists
     if [ ! -x "$PROCESS_SCRIPT" ]; then
         echo "Error: $PROCESS_SCRIPT not found or not executable"
         return 1
     fi
 
+    # Start the process
     $PROCESS_SCRIPT &
-    echo $! > "$PID_FILE"
-    echo "manage_my_process started"
+    PID=$!
+
+    # Give it a moment to start
+    sleep 1
+
+    # Verify it is running
+    if kill -0 "$PID" 2>/dev/null; then
+        echo "$PID" > "$PID_FILE"
+        echo "manage_my_process started"
+    else
+        echo "Failed to start manage_my_process"
+        return 1
+    fi
 }
 
 stop() {
+    # If PID file exists, try to kill process
     if [ -f "$PID_FILE" ]; then
         PID=$(cat "$PID_FILE")
         if kill -0 "$PID" 2>/dev/null; then
             kill "$PID"
+            # Wait for it to stop
             for _ in {1..10}; do
                 kill -0 "$PID" 2>/dev/null || break
                 sleep 0.5
@@ -31,6 +47,7 @@ stop() {
         fi
         rm -f "$PID_FILE"
     fi
+    # Always print stopped
     echo "manage_my_process stopped"
 }
 
