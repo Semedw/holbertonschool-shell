@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 # File to write messages
-# Target log file
-LOG_FILE="/tmp/my_process"
+OUTPUT_FILE="/tmp/my_process"
 
-# Main loop to write the "I am alive!" message
+# Infinite loop writing "I am alive!" every 2 seconds
 while true; do
-    echo "I am alive! (PID: $$)" >> $LOG_FILE
+    echo "I am alive!" >> "$OUTPUT_FILE"
     sleep 2
 done
