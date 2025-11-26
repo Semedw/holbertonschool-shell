@@ -1,51 +1,38 @@
 #!/usr/bin/env bash
 #salam
-PID_FILE="/var/run/my_process.pid"
-PROCESS="./my_process"
-
-start() {
-    if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-        echo "my_process already running"
-        return 0
-    fi
-
-    # Prosesi background-da başlat
-    $PROCESS &
-    PID=$!
-
-    # PID faylını YARATMAQ root icazəsi tələb edir → skript root kimi çağırılır
-    echo "$PID" > "$PID_FILE"
-
-    echo "my_process started"
-}
-
-stop() {
-    if [ ! -f "$PID_FILE" ]; then
-        echo "my_process not running"
-        return 0
-    fi
-
-    PID=$(cat "$PID_FILE")
-
-    if kill -0 "$PID" 2>/dev/null; then
-        kill "$PID"
-        sleep 1
-    fi
-
-    # PID file'ı mütləq sil
-    rm -f "$PID_FILE"
-
-    echo "my_process stopped"
-}
-
-restart() {
-    stop
-    start
-}
+PIDFILE="/var/run/my_process.pid"
+MYCMD="/usr/bin/sleep 1000"
 
 case "$1" in
-    start) start ;;
-    stop) stop ;;
-    restart) restart ;;
-    *) echo "Usage: $0 {start|stop|restart}" ;;
+  start)
+    if [ -f "$PIDFILE" ]; then
+      echo "Process already running"
+      exit 0
+    fi
+
+    $MYCMD &
+    echo $! > "$PIDFILE"
+    ;;
+
+  stop)
+    if [ -f "$PIDFILE" ]; then
+      kill "$(cat "$PIDFILE")" 2>/dev/null
+      rm -f "$PIDFILE"
+    fi
+    ;;
+
+  restart)
+    if [ -f "$PIDFILE" ]; then
+      kill "$(cat "$PIDFILE")" 2>/dev/null
+      rm -f "$PIDFILE"
+    fi
+
+    $MYCMD &
+    echo $! > "$PIDFILE"
+    ;;
+
+  *)
+    echo "Usage: manage_my_process {start|stop|restart}"
+    exit 1
+    ;;
 esac
