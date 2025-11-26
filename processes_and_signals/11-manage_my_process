@@ -1,38 +1,47 @@
 #!/usr/bin/env bash
-#salam
-PIDFILE="/var/run/my_process.pid"
-MYCMD="/usr/bin/sleep 1000"
+# blablabla
+PID_FILE="/var/run/my_process.pid"
+PROCESS_SCRIPT="./manage_my_process"
+
+start() {
+    if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
+        return 1
+    fi
+
+    if [ ! -x "$PROCESS_SCRIPT" ]; then
+        echo "Error: $PROCESS_SCRIPT not found or not executable"
+        return 1
+    fi
+
+    $PROCESS_SCRIPT &
+    echo $! > "$PID_FILE"
+}
+
+stop() {
+    if [ ! -f "$PID_FILE" ]; then
+        return 1
+    fi
+
+    PID=$(cat "$PID_FILE")
+    if kill -0 "$PID" 2>/dev/null; then
+        kill "$PID"
+        for _ in {1..10}; do
+            kill -0 "$PID" 2>/dev/null || break
+            sleep 0.5
+        done
+    fi
+    rm -f "$PID_FILE"
+}
+
+restart() {
+    stop
+    start
+    echo "manage_my_process restarted"
+}
 
 case "$1" in
-  start)
-    if [ -f "$PIDFILE" ]; then
-      echo "Process already running"
-      exit 0
-    fi
-
-    $MYCMD &
-    echo $! > "$PIDFILE"
-    ;;
-
-  stop)
-    if [ -f "$PIDFILE" ]; then
-      kill "$(cat "$PIDFILE")" 2>/dev/null
-      rm -f "$PIDFILE"
-    fi
-    ;;
-
-  restart)
-    if [ -f "$PIDFILE" ]; then
-      kill "$(cat "$PIDFILE")" 2>/dev/null
-      rm -f "$PIDFILE"
-    fi
-
-    $MYCMD &
-    echo $! > "$PIDFILE"
-    ;;
-
-  *)
-    echo "Usage: manage_my_process {start|stop|restart}"
-    exit 1
-    ;;
+    start) start ;;
+    stop) stop ;;
+    restart) restart ;;
+    *) echo "Usage: manage_my_process {start|stop|restart}" ;;
 esac
