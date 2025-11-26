@@ -7,11 +7,6 @@ PROCESS_SCRIPT="./manage_my_process"
 PID_FILE="/var/run/my_process.pid"
 
 # Try to write PID
-echo $$ > "$PID_FILE" 2>/dev/null || {
-    echo "Cannot create PID file in /var/run, permission denied"
-    exit 1
-}
-
 start() {
     $PROCESS_SCRIPT &
     echo $! > "$PID_FILE"
