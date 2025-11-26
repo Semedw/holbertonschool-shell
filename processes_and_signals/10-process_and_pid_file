@@ -1,17 +1,15 @@
 #!/usr/bin/env bash
-# File: 10-process_and_pid_file
+#blablabla 
+
+trap 'echo "I hate the kill command"; rm -f /var/run/myscript.pid; exit' SIGTERM
+trap 'echo "Y U no love me?!"' SIGINT
+trap 'rm -f /var/run/myscript.pid; exit' SIGQUIT
 
 # Create PID file
-PIDFILE="/var/run/myscript.pid"
-echo $$ > "$PIDFILE"
-
-# Define signal handlers
-trap 'echo "I hate the kill command"' SIGTERM
-trap 'echo "Y U no love me?!"' SIGINT
-trap 'rm -f "$PIDFILE"; exit' SIGQUIT SIGTERM
+echo $$ > /var/run/myscript.pid
 
 # Infinite loop
 while true; do
-    echo "To infinity and beyond indefinitely"
-    sleep 2
+    echo "To infinity and beyond"
+    sleep 1
 done
