@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#blablabla
+
+while IFS=: read -r USERNAME PASSWORD USERID GROUPID USERINFO HOMEDIR SHELL
+do
+    echo "The user $USERNAME is part of the $GROUPID gang, lives in $HOMEDIR and rides $SHELL. USER ID's place is protected by the passcode $PASSWORD, more info about the user here: $USERINFO"
+done < /etc/passwd
