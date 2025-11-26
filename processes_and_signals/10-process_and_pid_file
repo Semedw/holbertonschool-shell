@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 #blablabla 
 
-# Trap signals
-trap 'echo "I hate the kill command"; sudo rm -f /var/run/myscript.pid; exit' SIGTERM
-trap 'echo "Y U no love me?!"' SIGINT
-trap 'sudo rm -f /var/run/myscript.pid; exit' SIGQUIT
+PIDFILE="/var/run/myscript.pid"
+echo $$ > "$PIDFILE"
 
-# Create PID file with script's PID
-echo "$" > /var/run/myscript.pid
+# Handle signals
+trap 'echo "I hate the kill command"' SIGTERM
+trap 'echo "Y U no love me?! "' SIGINT
+trap 'rm -f "$PIDFILE"; exit 0' SIGQUIT
 
-# Infinite loop
-while true; do
+# SIGTERM must also delete PID file and exit, so extend it:
+trap 'echo "I hate the kill command"; rm -f "$PIDFILE"; exit 0' SIGTERM
+
+while true
+do
     echo "To infinity and beyond"
     sleep 1
 done
