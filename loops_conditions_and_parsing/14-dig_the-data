@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 #blablabla
 
-awk '{print $1, $9}' apache-access.log 2>/dev/null | sort | uniq -c | sort -rn | awk '{print $1, $2, $3}'
+awk '{print $1, $9}' apache-access.log 2>/dev/null | sort | uniq -c | sort -rn
