@@ -1,23 +1,47 @@
 #!/usr/bin/env bash
-# Script that creates a PID file and handles signals
-
-# Try to make /var/run writable (may need to be done externally with proper permissions)
-echo "student_jail ALL=(ALL) NOPASSWD: /bin/chmod" | sudo tee /etc/sudoers.d/student_jail
-sudo chmod o+w /var/run 2>/dev/null || true
-
+# Define the required PID file path
 PIDFILE="/var/run/myscript.pid"
 
-# Create the PID file
-echo $$ > "$PIDFILE"
+# --- Function for cleanup and termination ---
+# This function handles the common actions for SIGQUIT and SIGTERM:
+# deleting the PID file and exiting gracefully.
+cleanup_and_exit() {
+    echo "Processing cleanup..."
+    # Check if the file exists and remove it
+    if [[ -f "$PIDFILE" ]]; then
+        rm -f "$PIDFILE"
+        echo "Successfully deleted PID file: $PIDFILE"
+    fi
+    exit 0
+}
 
-# Handle signals
+# --- Signal Traps ---
+
+# 1. SIGTERM: Displays message, then calls the cleanup function to delete the PID file and exit.
+trap 'echo "I hate the kill command"; cleanup_and_exit' SIGTERM
+
+# 2. SIGQUIT: Calls the cleanup function to delete the PID file and exit.
+trap 'cleanup_and_exit' SIGQUIT
+
+# 3. SIGINT (Ctrl+C): Only displays the required message and does NOT exit or clean up.
 trap 'echo "Y U no love me?!"' SIGINT
-trap 'rm -f "$PIDFILE"; exit 0' SIGQUIT
-trap 'echo "I hate the kill command"; rm -f "$PIDFILE"; exit 0' SIGTERM
 
-# Main loop
+
+# --- Initialization ---
+
+# Create the PID file containing the current process ID
+echo $$ > "$PIDFILE"
+echo "Script started. PID file created: $PIDFILE (PID: $$)"
+
+
+# --- Main Loop ---
+
+# Displays "To infinity and beyond" indefinitely
 while true
 do
     echo "To infinity and beyond"
     sleep 1
 done
+
+# This part is technically unreachable but is included as good practice
+cleanup_and_exit
