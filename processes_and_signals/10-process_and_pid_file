@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Define the required PID file path
-PIDFILE="/var/run/myscript.pid"
+PIDFILE="/tmp/myscript.pid"
 
 # --- Function for cleanup and termination ---
 # This function handles the common actions for SIGQUIT and SIGTERM:
