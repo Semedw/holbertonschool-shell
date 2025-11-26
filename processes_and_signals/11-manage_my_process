@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# blablabla
+#salam
 PID_FILE="/var/run/my_process.pid"
 PROCESS_SCRIPT="./manage_my_process"
 
 start() {
     if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
+        echo "manage_my_process is already running"
         return 1
     fi
 
@@ -15,10 +16,12 @@ start() {
 
     $PROCESS_SCRIPT &
     echo $! > "$PID_FILE"
+    echo "manage_my_process started"
 }
 
 stop() {
     if [ ! -f "$PID_FILE" ]; then
+        echo "manage_my_process is not running"
         return 1
     fi
 
@@ -31,11 +34,12 @@ stop() {
         done
     fi
     rm -f "$PID_FILE"
+    echo "manage_my_process stopped"
 }
 
 restart() {
-    stop
-    start
+    stop >/dev/null 2>&1
+    start >/dev/null 2>&1
     echo "manage_my_process restarted"
 }
 
