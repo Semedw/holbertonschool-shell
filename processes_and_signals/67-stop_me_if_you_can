@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#blablabla
+
+pkill -9 -f "7-higlander"
