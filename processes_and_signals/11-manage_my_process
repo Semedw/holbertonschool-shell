@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#blablabla
 
 PID_FILE="/tmp/my_process.pid"
 PROCESS_SCRIPT="./manage_my_process"
