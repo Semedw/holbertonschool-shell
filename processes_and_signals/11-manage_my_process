@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #blablabla
-PID_FILE="/var/run/my_process.pid"
+
+PID_FILE="/tmp/my_process.pid"
 PROCESS_SCRIPT="./manage_my_process"
 
 start() {
@@ -8,13 +9,13 @@ start() {
         echo "manage_my_process is already running"
         return 1
     fi
-    
+
     if [ ! -x "$PROCESS_SCRIPT" ]; then
         echo "Error: $PROCESS_SCRIPT not found or not executable"
         return 1
     fi
-    
-    $PROCESS_SCRIPT &
+
+    "$PROCESS_SCRIPT" &
     echo $! > "$PID_FILE"
     echo "manage_my_process started"
 }
@@ -24,15 +25,16 @@ stop() {
         echo "manage_my_process is not running"
         return 1
     fi
-    
+
     PID=$(cat "$PID_FILE")
+
     if kill -0 "$PID" 2>/dev/null; then
         kill "$PID"
-        # Wait for process to actually stop
+        # Wait for the process to actually stop
         for _ in {1..10}; do
-    		kill -0 "$PID" 2>/dev/null || break
-    		sleep 0.5
-	done
+            kill -0 "$PID" 2>/dev/null || break
+            sleep 0.5
+        done
         rm -f "$PID_FILE"
         echo "manage_my_process stopped"
     else
