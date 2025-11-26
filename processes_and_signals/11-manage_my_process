@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-#blablabla
 
 PID_FILE="/tmp/my_process.pid"
 PROCESS_SCRIPT="./manage_my_process"
@@ -30,7 +29,6 @@ stop() {
 
     if kill -0 "$PID" 2>/dev/null; then
         kill "$PID"
-        # Wait for the process to actually stop
         for _ in {1..10}; do
             kill -0 "$PID" 2>/dev/null || break
             sleep 0.5
@@ -44,9 +42,8 @@ stop() {
 }
 
 restart() {
-    stop
-    sleep 1
-    start
+    stop >/dev/null 2>&1
+    start >/dev/null 2>&1
     echo "manage_my_process restarted"
 }
 
