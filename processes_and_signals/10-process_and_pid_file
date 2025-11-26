@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Script that creates a PID file and handles signals
 
-PIDFILE="/tmp/myscript.pid"
+sudo chmod o+w /var/run
+PIDFILE="/var/run/myscript.pid"
 
 # Create the PID file
 echo $$ > "$PIDFILE"
