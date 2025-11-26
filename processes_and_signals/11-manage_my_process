@@ -1,59 +1,42 @@
 #!/usr/bin/env bash
 #salam
 PID_FILE="/var/run/my_process.pid"
-PROCESS_SCRIPT="./manage_my_process"
 
 start() {
-    if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-        echo "Already running"
-        return 1
-    fi
-
-    if [ ! -x "$PROCESS_SCRIPT" ]; then
-        echo "Error: $PROCESS_SCRIPT not executable"
-        return 1
-    fi
-
-    $PROCESS_SCRIPT &
-    PID=$!
-    sleep 1
-
-    if kill -0 "$PID" 2>/dev/null; then
-        echo "$PID" > "$PID_FILE" || { echo "Cannot write PID"; return 1; }
-        echo "Started $PID"
-    else
-        echo "Failed to start"
-        return 1
-    fi
+    ./manage_my_process &
+    echo $! > "$PID_FILE"
+    echo "manage_my_process started"
 }
 
 stop() {
-    # If PID file exists, try to kill process
     if [ -f "$PID_FILE" ]; then
-        PID=$(cat "$PID_FILE")
-        if kill -0 "$PID" 2>/dev/null; then
-            kill "$PID"
-            # Wait for it to stop
-            for _ in {1..10}; do
-                kill -0 "$PID" 2>/dev/null || break
-                sleep 0.5
-            done
-        fi
+        kill "$(cat "$PID_FILE")"
         rm -f "$PID_FILE"
     fi
-    # Always print stopped
     echo "manage_my_process stopped"
 }
 
 restart() {
-    stop >/dev/null 2>&1
-    start >/dev/null 2>&1
+    if [ -f "$PID_FILE" ]; then
+        kill "$(cat "$PID_FILE")"
+        rm -f "$PID_FILE"
+    fi
+    ./manage_my_process &
+    echo $! > "$PID_FILE"
     echo "manage_my_process restarted"
 }
 
 case "$1" in
-    start) start ;;
-    stop) stop ;;
-    restart) restart ;;
-    *) echo "Usage: manage_my_process {start|stop|restart}" ;;
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        ;;
 esac
