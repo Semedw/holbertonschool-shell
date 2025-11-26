@@ -12,13 +12,10 @@ PATH_TO_SERVICE="./$SERVICE_NAME"
 start() {
     echo -n "Starting $SERVICE_NAME..."
     # Execute the service in the background (&) and redirect stdout/stderr to /dev/null
-    # nohup prevents the process from being killed when the terminal exits
-    # The 'disown' command is also often used for true daemonization, 
-    # but a simple '&' works for this exercise.
-    nohup $PATH_TO_SERVICE > /dev/null 2>&1 &
+    nohup "$PATH_TO_SERVICE" > /dev/null 2>&1 &
     
     # Get the PID of the last background command ($!) and save it to the PID file
-    echo $! > $PID_FILE
+    echo $! > "$PID_FILE"
     echo " started"
 }
 
@@ -27,15 +24,16 @@ stop() {
     echo -n "Stopping $SERVICE_NAME..."
     
     # Check if PID file exists
-    if [ -f $PID_FILE ]; then
+    if [ -f "$PID_FILE" ]; then
         # Read the PID from the file
-        PID=$(cat $PID_FILE)
+        PID=$(cat "$PID_FILE")
         
         # Send the termination signal (SIGTERM) to the process
-        kill $PID 2> /dev/null
+        # FIX: Double quote $PID (SC2086)
+        kill "$PID" 2> /dev/null
         
         # Delete the PID file
-        rm -f $PID_FILE
+        rm -f "$PID_FILE"
         echo " stopped"
     else
         # If the file doesn't exist, the process might not be running
