@@ -2,11 +2,11 @@
 #blablabla 
 
 # Trap signals
-trap 'echo "I hate the kill command"; rm -f /var/run/myscript.pid; exit' SIGTERM
+trap 'echo "I hate the kill command"; sudo rm -f /var/run/myscript.pid; exit' SIGTERM
 trap 'echo "Y U no love me?!"' SIGINT
-trap 'rm -f /var/run/myscript.pid; exit' SIGQUIT
+trap 'sudo rm -f /var/run/myscript.pid; exit' SIGQUIT
 
-# Create PID file
+# Create PID file with script's PID
 echo "$" > /var/run/myscript.pid
 
 # Infinite loop
