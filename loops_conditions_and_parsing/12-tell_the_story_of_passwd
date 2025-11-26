@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 #blablabla
 
-while IFS=: read -r USERNAME PASSWORD USERID GROUPID USERINFO HOMEDIR SHELL
+while IFS=':' read -r username password uid gid info home shell
 do
-    # Ensure USERINFO is not empty, default to "No info"
-    [ -z "$USERINFO" ] && USERINFO="No info"
-
-    echo "The user $USERNAME is part of the $GROUPID gang, lives in $HOMEDIR and rides $SHELL. $USERID's place is protected by the passcode $PASSWORD, more info about the user here: $USERINFO"
+    echo "The user $username is part of the $gid gang, lives in $home and rides $shell. $uid's place is protected by the passcode $password, more info about the user here: $info"
 done < /etc/passwd
