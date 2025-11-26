@@ -1,27 +1,17 @@
 #!/usr/bin/env bash
-#blablabla
+# File: 10-process_and_pid_file
 
+# Create PID file
 PIDFILE="/var/run/myscript.pid"
+echo $$ > "$PIDFILE"
 
-# Write our PID to the file
-echo "$$" > "$PIDFILE"
+# Define signal handlers
+trap 'echo "I hate the kill command"' SIGTERM
+trap 'echo "Y U no love me?!"' SIGINT
+trap 'rm -f "$PIDFILE"; exit' SIGQUIT SIGTERM
 
-# When we get SIGTERM:
-#   1) complain
-#   2) remove pid file
-#   3) exit
-trap 'echo "I hate the kill command"; rm -f "$PIDFILE"; exit' SIGTERM
-
-# When we get SIGINT (Ctrl+C):
-#   only complain
-trap 'echo "Y U no love me?!";' SIGINT
-
-# When we get SIGQUIT:
-#   clean up and exit
-trap 'rm -f "$PIDFILE"; exit' SIGQUIT
-
+# Infinite loop
 while true; do
-    echo "To infinity and beyond"
+    echo "To infinity and beyond indefinitely"
     sleep 2
 done
-
