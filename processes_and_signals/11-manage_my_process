@@ -20,20 +20,17 @@ start() {
 }
 
 stop() {
-    if [ ! -f "$PID_FILE" ]; then
-        echo "manage_my_process is not running"
-        return 1
+    if [ -f "$PID_FILE" ]; then
+        PID=$(cat "$PID_FILE")
+        if kill -0 "$PID" 2>/dev/null; then
+            kill "$PID"
+            for _ in {1..10}; do
+                kill -0 "$PID" 2>/dev/null || break
+                sleep 0.5
+            done
+        fi
+        rm -f "$PID_FILE"
     fi
-
-    PID=$(cat "$PID_FILE")
-    if kill -0 "$PID" 2>/dev/null; then
-        kill "$PID"
-        for _ in {1..10}; do
-            kill -0 "$PID" 2>/dev/null || break
-            sleep 0.5
-        done
-    fi
-    rm -f "$PID_FILE"
     echo "manage_my_process stopped"
 }
 
