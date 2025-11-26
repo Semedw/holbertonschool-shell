@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 #blablabla
-ps -ef
+ps -e -o user,pid,ppid,cmd --forest
+
