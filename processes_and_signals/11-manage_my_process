@@ -5,7 +5,6 @@ PID_FILE="/var/run/my_process.pid"
 PROCESS_SCRIPT="./manage_my_process"
 
 start() {
-    # Start the process in the background
     $PROCESS_SCRIPT &
     echo $! > "$PID_FILE"
     echo "manage_my_process started"
@@ -20,12 +19,11 @@ stop() {
 }
 
 restart() {
-    stop
-    start
+    stop >/dev/null 2>&1
+    start >/dev/null 2>&1
     echo "manage_my_process restarted"
 }
 
-# Check the argument
 case "$1" in
     start) start ;;
     stop) stop ;;
