@@ -1,55 +1,51 @@
 #!/usr/bin/env bash
 #salam
-PID_FILE="my_process.pid"
-PROCESS_SCRIPT="./manage_my_process"
+PID_FILE="/var/run/my_process.pid"
+PROCESS="./my_process"
 
 start() {
     if [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null; then
-        echo "manage_my_process is already running"
-        return 1
+        echo "my_process already running"
+        return 0
     fi
 
-    if [ ! -x "$PROCESS_SCRIPT" ]; then
-        echo "Error: $PROCESS_SCRIPT not found or not executable"
-        return 1
-    fi
+    # Prosesi background-da başlat
+    $PROCESS &
+    PID=$!
 
-    "$PROCESS_SCRIPT" &
-    echo $! > "$PID_FILE"
-    echo "manage_my_process started"
+    # PID faylını YARATMAQ root icazəsi tələb edir → skript root kimi çağırılır
+    echo "$PID" > "$PID_FILE"
+
+    echo "my_process started"
 }
 
 stop() {
     if [ ! -f "$PID_FILE" ]; then
-        echo "manage_my_process is not running"
-        return 1
+        echo "my_process not running"
+        return 0
     fi
 
     PID=$(cat "$PID_FILE")
 
     if kill -0 "$PID" 2>/dev/null; then
         kill "$PID"
-        for _ in {1..10}; do
-            kill -0 "$PID" 2>/dev/null || break
-            sleep 0.5
-        done
-        rm -f "$PID_FILE"
-        echo "manage_my_process stopped"
-    else
-        rm -f "$PID_FILE"
-        echo "manage_my_process was not running (stale PID file removed)"
+        sleep 1
     fi
+
+    # PID file'ı mütləq sil
+    rm -f "$PID_FILE"
+
+    echo "my_process stopped"
 }
 
 restart() {
-    stop >/dev/null 2>&1
-    start >/dev/null 2>&1
-    echo "manage_my_process restarted"
+    stop
+    start
 }
 
 case "$1" in
     start) start ;;
     stop) stop ;;
     restart) restart ;;
-    *) echo "Usage: manage_my_process {start|stop|restart}" ;;
+    *) echo "Usage: $0 {start|stop|restart}" ;;
 esac
